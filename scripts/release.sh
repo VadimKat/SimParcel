@@ -211,6 +211,9 @@ gh release create "$TAG" "$DMG" "$ZIP" "$BUILD/appcast.xml" \
 step "Updating the Homebrew cask"
 TAP="$BUILD/homebrew-tap"
 git clone -q "$TAP_REMOTE" "$TAP"
+# Commit to the tap with this repository's identity, not the global one.
+git -C "$TAP" config user.name "$(git config user.name)"
+git -C "$TAP" config user.email "$(git config user.email)"
 mkdir -p "$TAP/Casks"
 cat > "$TAP/Casks/simparcel.rb" <<RUBY
 cask "simparcel" do
