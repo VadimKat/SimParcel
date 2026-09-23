@@ -94,6 +94,14 @@ Because the app runs `xcrun`, it can't use the App Sandbox and isn't distributed
 - **"The Files app isn't available":** some simulator runtimes don't include Files. Try a simulator with another iOS version.
 - **An app fails to install:** only builds for the iOS Simulator work (`Debug-iphonesimulator`), not device builds or `.ipa` files.
 
+## Releasing
+
+`scripts/release.sh` archives the app, signs it with Developer ID, notarizes and staples it, and writes a zip and a DMG to `build/release` with their SHA-256 checksums. It needs a Developer ID Application certificate and notarization credentials stored once in the keychain:
+
+```bash
+xcrun notarytool store-credentials "SimParcel" --apple-id "<Apple ID>" --team-id "<Team ID>"
+```
+
 ## License
 
 [MIT](LICENSE)
