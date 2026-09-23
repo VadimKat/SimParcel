@@ -15,9 +15,11 @@ struct QueueItemTests {
         #expect(ItemKind(url: file("/a/payload.apns")) == .push)
         #expect(ItemKind(url: URL(string: "https://example.com/a.jpg")!) == .link)
         #expect(ItemKind(url: URL(string: "myapp://settings")!) == .link)
-        #expect(ItemKind(url: file("/a/notes.txt")) == nil)
-        #expect(ItemKind(url: file("/a/payload.json")) == nil)
-        #expect(ItemKind(url: file("/a/README")) == nil)
+        #expect(ItemKind(url: file("/a/notes.txt")) == .file)
+        #expect(ItemKind(url: file("/a/report.pdf")) == .file)
+        #expect(ItemKind(url: file("/a/payload.json")) == .file)
+        #expect(ItemKind(url: file("/a/README")) == .file)
+        #expect(ItemKind(url: URL(string: "no-scheme")!) == nil)
     }
 
     @Test func pairsLivePhotoFiles() {
@@ -56,10 +58,16 @@ struct QueueItemTests {
         #expect(items.map(\.name) == ["https://example.com", "myapp://settings"])
     }
 
-    @Test func skipsDuplicatesAndUnsupportedFiles() {
-        let queue = QueueItem.merging([file("/a/IMG_1.HEIC")], into: [])
+    @Test func skipsDuplicates() {
+        let queue = QueueItem.merging([file("/a/IMG_1.HEIC"), file("/a/notes.txt")], into: [])
         let items = QueueItem.merging([file("/a/IMG_1.HEIC"), file("/a/notes.txt")], into: queue)
         #expect(items == queue)
+        #expect(items.map(\.kind) == [.photo, .file])
+    }
+
+    @Test func doesNotPairFilesWithMediaOfTheSameName() {
+        let items = QueueItem.merging([file("/a/Trip.jpg"), file("/a/Trip.pdf")], into: [])
+        #expect(items.map(\.kind) == [.photo, .file])
     }
 
     @Test func addingPairedFileClearsPreviousFailure() {
@@ -78,7 +86,7 @@ struct QueueItemTests {
         #expect(sorted.last == .link)
     }
 
-    @Test func expandsFoldersKeepingAppBundlesWhole() throws {
+    @Test func expandsFoldersKeepingAppBundlesWholeAndSkippingHiddenFiles() throws {
         let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let nested = folder.appendingPathComponent("Nested")
         try FileManager.default.createDirectory(at: nested, withIntermediateDirectories: true)
@@ -95,13 +103,13 @@ struct QueueItemTests {
         }
 
         let result = DroppedFiles.collect(from: [folder, file("/a/loose.heic")])
-        #expect(result.supported.map(\.lastPathComponent) == ["a.mov", "b.jpg", "Demo.app", "c.png", "loose.heic"])
-        #expect(result.skipped.map(\.lastPathComponent) == ["notes.txt"])
+        #expect(result.supported.map(\.lastPathComponent) == ["a.mov", "b.jpg", "Demo.app", "c.png", "notes.txt", "loose.heic"])
+        #expect(result.skipped.isEmpty)
     }
 
     @Test func namesASingleSkippedFile() {
         let summary = DroppedFiles.skippedSummary([file("/a/notes.txt")], addedAny: true)
-        #expect(summary?.message == "Skipped notes.txt — this file type isn’t supported.")
+        #expect(summary?.message == "Skipped notes.txt — it can’t be sent to a simulator.")
         #expect(summary?.detail == "/a/notes.txt")
 
         let nothingAdded = DroppedFiles.skippedSummary([file("/a/notes.txt")], addedAny: false)
@@ -112,12 +120,12 @@ struct QueueItemTests {
         let skipped = (1...12).map { file("/a/file\($0).txt") }
 
         let summary = DroppedFiles.skippedSummary(skipped, addedAny: true)
-        #expect(summary?.message == "Skipped 12 files of unsupported types.")
+        #expect(summary?.message == "Skipped 12 items that can’t be sent to a simulator.")
         #expect(summary?.detail?.hasPrefix("file1.txt\nfile2.txt") == true)
         #expect(summary?.detail?.hasSuffix("file10.txt\nand 2 more") == true)
 
         let nothingAdded = DroppedFiles.skippedSummary(Array(skipped.prefix(2)), addedAny: false)
-        #expect(nothingAdded?.message == "None of the 2 files can be sent to a simulator.")
+        #expect(nothingAdded?.message == "None of the 2 items can be sent to a simulator.")
         #expect(nothingAdded?.detail == "file1.txt\nfile2.txt")
     }
 

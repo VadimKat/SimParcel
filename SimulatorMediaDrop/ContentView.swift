@@ -6,9 +6,8 @@ struct ContentView: View {
     @State private var isDropTargeted = false
     @State private var linkText = ""
 
-    static let pickableTypes: [UTType] = [
-        .image, .movie, .vCard, .applicationBundle, .folder,
-    ] + [UTType(filenameExtension: "apns")].compactMap { $0 }
+    /// Any file can be sent: files that aren't media, contacts, apps or push payloads go to the Files app.
+    static let pickableTypes: [UTType] = [.item]
 
     var body: some View {
         @Bindable var model = model
@@ -251,7 +250,7 @@ private struct EmptyDropZone: View {
                 Text(isTargeted ? "Release to add" : "Drop photos, videos and more")
                     .font(.title3.weight(.semibold))
 
-                Text("Live Photos, contacts, apps, push payloads, links and folders work too")
+                Text("Apps, push payloads, contacts, links, and any file for the Files app")
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }

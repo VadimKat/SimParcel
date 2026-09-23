@@ -20,6 +20,9 @@
         A1000000000000000000000D /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* AppIcon.icon */; };
         A1000000000000000000000E /* SimulatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* SimulatorService.swift */; };
         A1000000000000000000000F /* SimulatorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* SimulatorServiceTests.swift */; };
+        A10000000000000000000010 /* FilesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* FilesStorage.swift */; };
+        A10000000000000000000011 /* FilesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* FilesStorage.swift */; };
+        A10000000000000000000012 /* FilesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* FilesStorageTests.swift */; };
         A1000000000000000000000C /* QueueItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* QueueItemTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +41,8 @@
         A2000000000000000000000C /* QueueItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueItemTests.swift; sourceTree = "<group>"; };
         A2000000000000000000000E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
         A2000000000000000000000F /* SimulatorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorServiceTests.swift; sourceTree = "<group>"; };
+        A20000000000000000000010 /* FilesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesStorage.swift; sourceTree = "<group>"; };
+        A20000000000000000000011 /* FilesStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesStorageTests.swift; sourceTree = "<group>"; };
         A2000000000000000000000D /* SimulatorMediaDropTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimulatorMediaDropTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -63,6 +68,7 @@
                 A20000000000000000000001 /* SimulatorMediaDropApp.swift */,
                 A20000000000000000000009 /* AppModel.swift */,
                 A20000000000000000000002 /* ContentView.swift */,
+                A20000000000000000000010 /* FilesStorage.swift */,
                 A2000000000000000000000A /* QueueGrid.swift */,
                 A20000000000000000000008 /* QueueItem.swift */,
                 A20000000000000000000007 /* Simulator.swift */,
@@ -91,6 +97,7 @@
         A40000000000000000000005 /* SimulatorMediaDropTests */ = {
             isa = PBXGroup;
             children = (
+                A20000000000000000000011 /* FilesStorageTests.swift */,
                 A2000000000000000000000C /* QueueItemTests.swift */,
                 A2000000000000000000000B /* SimulatorListTests.swift */,
                 A2000000000000000000000F /* SimulatorServiceTests.swift */,
@@ -180,6 +187,7 @@
                 A10000000000000000000001 /* SimulatorMediaDropApp.swift in Sources */,
                 A10000000000000000000007 /* AppModel.swift in Sources */,
                 A10000000000000000000002 /* ContentView.swift in Sources */,
+                A10000000000000000000010 /* FilesStorage.swift in Sources */,
                 A10000000000000000000008 /* QueueGrid.swift in Sources */,
                 A10000000000000000000006 /* QueueItem.swift in Sources */,
                 A10000000000000000000005 /* Simulator.swift in Sources */,
@@ -191,9 +199,11 @@
             isa = PBXSourcesBuildPhase;
             buildActionMask = 2147483647;
             files = (
+                A10000000000000000000011 /* FilesStorage.swift in Sources */,
                 A1000000000000000000000A /* QueueItem.swift in Sources */,
                 A10000000000000000000009 /* Simulator.swift in Sources */,
                 A1000000000000000000000E /* SimulatorService.swift in Sources */,
+                A10000000000000000000012 /* FilesStorageTests.swift in Sources */,
                 A1000000000000000000000C /* QueueItemTests.swift in Sources */,
                 A1000000000000000000000B /* SimulatorListTests.swift in Sources */,
                 A1000000000000000000000F /* SimulatorServiceTests.swift in Sources */,

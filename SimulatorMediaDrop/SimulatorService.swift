@@ -62,7 +62,24 @@ enum SimulatorService {
             _ = try await simctl(["push", device.id, payload.path])
         case .link:
             _ = try await simctl(["openurl", device.id, item.urls[0].absoluteString])
+        case .file:
+            try FilesStorage.copy(item.urls[0], into: try await filesFolder(on: device))
         }
+    }
+
+    /// The Files app's On My iPhone folder on a device.
+    private static func filesFolder(on device: SimulatorDevice) async throws -> URL {
+        let groups = try? await simctl(["get_app_container", device.id, "com.apple.DocumentsApp", "groups"])
+        let group = groups
+            .flatMap { FilesStorage.groupPath(inGroupsOutput: String(decoding: $0, as: UTF8.self)) }
+            .map { URL(fileURLWithPath: $0) }
+            ?? device.dataPath.flatMap(FilesStorage.findGroup(inDataPath:))
+
+        guard let group else {
+            throw SimulatorServiceError.commandFailed("The Files app isn’t available on \(device.name).")
+        }
+
+        return group.appendingPathComponent(FilesStorage.folderName)
     }
 
     private static func openSimulatorApp(showing device: SimulatorDevice) async throws {

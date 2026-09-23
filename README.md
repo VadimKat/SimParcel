@@ -2,7 +2,7 @@
 
 <img src="Artwork/AppIcon-Source.png" alt="Simulator Media Drop app icon" width="128">
 
-A small macOS app that sends photos, videos, Live Photos, contacts, apps, push notifications and links to iOS Simulators.
+A small macOS app that sends photos, videos, Live Photos, contacts, apps, push notifications, links and any other file to iOS Simulators.
 
 Dragging files onto a simulator window stopped working reliably in Xcode 27's Device Hub. This app brings that workflow back without the terminal: pick a simulator, drop your files, click **Send to Simulator**.
 
@@ -20,6 +20,7 @@ Drop files or whole folders onto the window, or choose them with **File → Choo
 | `.app` simulator builds | The app, installed |
 | `.apns` push payloads | A push notification |
 | Web links and deep links | The link, opened (drag it from a browser or use **File → Add Link…**, ⌘L) |
+| Any other file (PDF, JSON, ZIP, …) | A copy in **Files → On My iPhone** |
 
 - Send to one simulator, or choose **All Running Simulators** to send everything to each running simulator at once.
 - Simulators are grouped by iOS version, and running ones are listed first.
@@ -81,6 +82,7 @@ The app runs Apple's command line tools:
 - `xcrun simctl bootstatus <udid> -b` boots a simulator that isn't running.
 - `xcrun simctl addmedia <udid> <files…>` imports photos, videos and contacts. The files of a Live Photo go in a single call, which is how `simctl` pairs them.
 - `xcrun simctl install`, `push` and `openurl` handle apps, push payloads and links. Apps are installed first, so pushes and links in the same batch can reach them.
+- Other files are copied into the Files app's local storage (the `group.com.apple.FileProvider.LocalStorage` app group, found with `xcrun simctl get_app_container` or, on runtimes where that fails, by its container metadata). Each file is written under a temporary name and then renamed, so Files never shows a partial copy. A name that's taken gets a number: `report 2.pdf`.
 
 Because the app runs `xcrun`, it can't use the App Sandbox and isn't distributed through the Mac App Store.
 
@@ -89,6 +91,7 @@ Because the app runs `xcrun`, it can't use the App Sandbox and isn't distributed
 - **No simulators listed:** check that an iOS runtime is installed (**Xcode → Settings → Components**) and that Command Line Tools point to that Xcode. Then click Refresh (⌘R).
 - **Imports go to Photos, not your app:** `addmedia` writes to the simulator's Photos library. Use your app's photo picker to reach the files.
 - **A push fails with "isn't allowed to show notifications":** open the app in the simulator and allow notifications first.
+- **"The Files app isn't available":** some simulator runtimes don't include Files. Try a simulator with another iOS version.
 - **An app fails to install:** only builds for the iOS Simulator work (`Debug-iphonesimulator`), not device builds or `.ipa` files.
 
 ## License

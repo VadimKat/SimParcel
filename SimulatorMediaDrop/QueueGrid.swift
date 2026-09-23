@@ -187,7 +187,7 @@ private struct Thumbnail: View {
                     } else {
                         placeholder
                     }
-                case .contact, .app:
+                case .contact, .app, .file:
                     if let image {
                         Image(nsImage: image)
                             .resizable()
@@ -265,6 +265,7 @@ private extension ItemKind {
         case .app: ("App", "app.badge")
         case .push: ("Push", "bell.fill")
         case .link: ("Link", "link")
+        case .file: ("Files", "folder.fill")
         }
     }
 }

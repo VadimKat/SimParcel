@@ -9,8 +9,10 @@ enum ItemKind: Sendable, Hashable {
     case app
     case push
     case link
+    /// Any other file, copied to the Files app's On My iPhone folder.
+    case file
 
-    /// Classifies a dropped URL, or returns `nil` for files the simulator can't take.
+    /// Classifies a dropped URL. Files that aren't media, contacts, apps or push payloads go to the Files app.
     init?(url: URL) {
         guard url.isFileURL else {
             // Web links and custom-scheme deep links open in the simulator.
@@ -33,18 +35,15 @@ enum ItemKind: Sendable, Hashable {
             break
         }
 
-        guard let type = UTType(filenameExtension: url.pathExtension) else {
-            return nil
-        }
-
-        if type.conforms(to: .vCard) {
+        let type = UTType(filenameExtension: url.pathExtension)
+        if type?.conforms(to: .vCard) == true {
             self = .contact
-        } else if type.conforms(to: .image) {
+        } else if type?.conforms(to: .image) == true {
             self = .photo
-        } else if type.conforms(to: .movie) {
+        } else if type?.conforms(to: .movie) == true {
             self = .video
         } else {
-            return nil
+            self = .file
         }
     }
 
@@ -57,6 +56,7 @@ enum ItemKind: Sendable, Hashable {
         case .app: "App"
         case .push: "Push Notification"
         case .link: "Link"
+        case .file: "File"
         }
     }
 
@@ -68,7 +68,7 @@ enum ItemKind: Sendable, Hashable {
     var sendOrder: Int {
         switch self {
         case .app: 0
-        case .photo, .video, .livePhoto, .contact: 1
+        case .photo, .video, .livePhoto, .contact, .file: 1
         case .push: 2
         case .link: 3
         }
@@ -219,13 +219,13 @@ enum DroppedFiles {
         case (0, false):
             return ("Nothing to add.", nil)
         case (1, true):
-            return ("Skipped \(names[0]) — this file type isn’t supported.", skipped[0].path)
+            return ("Skipped \(names[0]) — it can’t be sent to a simulator.", skipped[0].path)
         case (1, false):
             return ("\(names[0]) can’t be sent to a simulator.", skipped[0].path)
         case (let count, true):
-            return ("Skipped \(count) files of unsupported types.", detail)
+            return ("Skipped \(count) items that can’t be sent to a simulator.", detail)
         case (let count, false):
-            return ("None of the \(count) files can be sent to a simulator.", detail)
+            return ("None of the \(count) items can be sent to a simulator.", detail)
         }
     }
 

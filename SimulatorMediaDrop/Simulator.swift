@@ -43,6 +43,7 @@ struct SimulatorDevice: Identifiable, Hashable, Sendable {
     let name: String
     let runtime: SimulatorRuntime
     let isBooted: Bool
+    let dataPath: String?
 
     var label: String {
         "\(name) · \(runtime.name)"
@@ -81,7 +82,8 @@ enum SimulatorList {
                     id: device.udid,
                     name: device.name,
                     runtime: runtime,
-                    isBooted: device.state == "Booted"
+                    isBooted: device.state == "Booted",
+                    dataPath: device.dataPath
                 )
             }
         }
@@ -119,5 +121,6 @@ enum SimulatorList {
         let udid: String
         let name: String
         let state: String
+        let dataPath: String?
     }
 }
