@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A50000000000000000000001"
-               BuildableName = "SimulatorMediaDrop.app"
-               BlueprintName = "SimulatorMediaDrop"
-               ReferencedContainer = "container:SimulatorMediaDrop.xcodeproj">
+               BuildableName = "SimParcel.app"
+               BlueprintName = "SimParcel"
+               ReferencedContainer = "container:SimParcel.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A50000000000000000000002"
-               BuildableName = "SimulatorMediaDropTests.xctest"
-               BlueprintName = "SimulatorMediaDropTests"
-               ReferencedContainer = "container:SimulatorMediaDrop.xcodeproj">
+               BuildableName = "SimParcelTests.xctest"
+               BlueprintName = "SimParcelTests"
+               ReferencedContainer = "container:SimParcel.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A50000000000000000000001"
-            BuildableName = "SimulatorMediaDrop.app"
-            BlueprintName = "SimulatorMediaDrop"
-            ReferencedContainer = "container:SimulatorMediaDrop.xcodeproj">
+            BuildableName = "SimParcel.app"
+            BlueprintName = "SimParcel"
+            ReferencedContainer = "container:SimParcel.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A50000000000000000000001"
-            BuildableName = "SimulatorMediaDrop.app"
-            BlueprintName = "SimulatorMediaDrop"
-            ReferencedContainer = "container:SimulatorMediaDrop.xcodeproj">
+            BuildableName = "SimParcel.app"
+            BlueprintName = "SimParcel"
+            ReferencedContainer = "container:SimParcel.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

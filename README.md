@@ -1,12 +1,12 @@
-# Simulator Media Drop
+# SimParcel
 
-<img src="Artwork/AppIcon-Source.png" alt="Simulator Media Drop app icon" width="128">
+<img src="Artwork/AppIcon-Source.png" alt="SimParcel app icon" width="128">
 
-A small macOS app that sends photos, videos, Live Photos, contacts, apps, push notifications, links and any other file to iOS Simulators.
+**Drag and drop for the iOS Simulator.** Send photos, videos, Live Photos, contacts, `.app` builds, `.apns` push notifications, deep links and any other file to one simulator or to all running simulators at once.
 
-Dragging files onto a simulator window stopped working reliably in Xcode 27's Device Hub. This app brings that workflow back without the terminal: pick a simulator, drop your files, click **Send to Simulator**.
+Xcode 27 replaced Simulator.app with Device Hub, which no longer accepts files dropped from Finder. SimParcel is a small native macOS app that brings that workflow back: pick a simulator, drop your files, click **Send to Simulator**. No terminal, no `xcrun simctl addmedia` by hand.
 
-<img src="Artwork/Screenshot.png" alt="Simulator Media Drop window with a queue of photos and videos" width="640">
+<img src="Artwork/Screenshot.png" alt="SimParcel window with a queue of photos and videos" width="640">
 
 ## Features
 
@@ -35,7 +35,7 @@ A payload needs an `aps` dictionary and a `Simulator Target Bundle` key with you
 {
   "Simulator Target Bundle": "com.example.MyApp",
   "aps": {
-    "alert": { "title": "Hello", "body": "Sent from Simulator Media Drop" }
+    "alert": { "title": "Hello", "body": "Sent from SimParcel" }
   }
 }
 ```
@@ -50,28 +50,28 @@ A payload needs an `aps` dictionary and a `Simulator Target Bundle` key with you
 
 ### Download
 
-Download the latest `SimulatorMediaDrop.zip` from [Releases](../../releases), unzip it, and move the app to `/Applications`.
+Download the latest `SimParcel.zip` from [Releases](../../releases), unzip it, and move the app to `/Applications`.
 
 If a release isn't notarized, macOS blocks it on first launch. To open it anyway, go to **System Settings → Privacy & Security** and click **Open Anyway**, or run:
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/SimulatorMediaDrop.app"
+xattr -dr com.apple.quarantine "/Applications/SimParcel.app"
 ```
 
 ### Build from source
 
 ```bash
-git clone https://github.com/<your-account>/SimulatorMediaDrop.git
-cd SimulatorMediaDrop
-open SimulatorMediaDrop.xcodeproj
+git clone https://github.com/<your-account>/SimParcel.git
+cd SimParcel
+open SimParcel.xcodeproj
 ```
 
-Run the **SimulatorMediaDrop** scheme on **My Mac**. There are no third-party dependencies.
+Run the **SimParcel** scheme on **My Mac**. There are no third-party dependencies.
 
 To build and test from the command line:
 
 ```bash
-xcodebuild -project SimulatorMediaDrop.xcodeproj -scheme SimulatorMediaDrop -destination 'platform=macOS' test
+xcodebuild -project SimParcel.xcodeproj -scheme SimParcel -destination 'platform=macOS' test
 ```
 
 ## How it works

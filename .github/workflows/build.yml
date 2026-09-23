@@ -17,8 +17,8 @@ jobs:
       - name: Build and test
         run: >
           xcodebuild
-          -project SimulatorMediaDrop.xcodeproj
-          -scheme SimulatorMediaDrop
+          -project SimParcel.xcodeproj
+          -scheme SimParcel
           -destination 'platform=macOS'
-          CODE_SIGN_IDENTITY=-
+          CODE_SIGNING_ALLOWED=NO
           test

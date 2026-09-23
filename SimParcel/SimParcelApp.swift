@@ -1,12 +1,12 @@
 import SwiftUI
 
 @main
-struct SimulatorMediaDropApp: App {
+struct SimParcelApp: App {
     @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
     @State private var model = AppModel()
 
     var body: some Scene {
-        Window("Simulator Media Drop", id: "main") {
+        Window("SimParcel", id: "main") {
             ContentView()
                 .environment(model)
         }

@@ -1,0 +1,376 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* SimParcelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000001 /* SimParcelApp.swift */; };
+		A10000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000002 /* ContentView.swift */; };
+		A10000000000000000000003 /* SimulatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* SimulatorService.swift */; };
+		A10000000000000000000004 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000005 /* Assets.xcassets */; };
+		A10000000000000000000005 /* Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* Simulator.swift */; };
+		A10000000000000000000006 /* QueueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* QueueItem.swift */; };
+		A10000000000000000000007 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000009 /* AppModel.swift */; };
+		A10000000000000000000008 /* QueueGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000A /* QueueGrid.swift */; };
+		A10000000000000000000009 /* Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000007 /* Simulator.swift */; };
+		A1000000000000000000000A /* QueueItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000008 /* QueueItem.swift */; };
+		A1000000000000000000000B /* SimulatorListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000B /* SimulatorListTests.swift */; };
+		A1000000000000000000000C /* QueueItemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000C /* QueueItemTests.swift */; };
+		A1000000000000000000000D /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000E /* AppIcon.icon */; };
+		A1000000000000000000000E /* SimulatorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000003 /* SimulatorService.swift */; };
+		A1000000000000000000000F /* SimulatorServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2000000000000000000000F /* SimulatorServiceTests.swift */; };
+		A10000000000000000000010 /* FilesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* FilesStorage.swift */; };
+		A10000000000000000000011 /* FilesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* FilesStorage.swift */; };
+		A10000000000000000000012 /* FilesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* FilesStorageTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A20000000000000000000001 /* SimParcelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimParcelApp.swift; sourceTree = "<group>"; };
+		A20000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		A20000000000000000000003 /* SimulatorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorService.swift; sourceTree = "<group>"; };
+		A20000000000000000000004 /* SimParcel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimParcel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A20000000000000000000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A20000000000000000000006 /* AppIcon-Source.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AppIcon-Source.png"; sourceTree = "<group>"; };
+		A20000000000000000000007 /* Simulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Simulator.swift; sourceTree = "<group>"; };
+		A20000000000000000000008 /* QueueItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueItem.swift; sourceTree = "<group>"; };
+		A20000000000000000000009 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		A2000000000000000000000A /* QueueGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueGrid.swift; sourceTree = "<group>"; };
+		A2000000000000000000000B /* SimulatorListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorListTests.swift; sourceTree = "<group>"; };
+		A2000000000000000000000C /* QueueItemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueItemTests.swift; sourceTree = "<group>"; };
+		A2000000000000000000000D /* SimParcelTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimParcelTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2000000000000000000000E /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		A2000000000000000000000F /* SimulatorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorServiceTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000010 /* FilesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesStorage.swift; sourceTree = "<group>"; };
+		A20000000000000000000011 /* FilesStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesStorageTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A30000000000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A30000000000000000000002 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A40000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A40000000000000000000002 /* SimParcel */,
+				A40000000000000000000005 /* SimParcelTests */,
+				A40000000000000000000004 /* Artwork */,
+				A40000000000000000000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A40000000000000000000002 /* SimParcel */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000001 /* SimParcelApp.swift */,
+				A20000000000000000000009 /* AppModel.swift */,
+				A20000000000000000000002 /* ContentView.swift */,
+				A20000000000000000000010 /* FilesStorage.swift */,
+				A2000000000000000000000A /* QueueGrid.swift */,
+				A20000000000000000000008 /* QueueItem.swift */,
+				A20000000000000000000007 /* Simulator.swift */,
+				A20000000000000000000003 /* SimulatorService.swift */,
+				A2000000000000000000000E /* AppIcon.icon */,
+				A20000000000000000000005 /* Assets.xcassets */,
+			);
+			path = SimParcel;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000004 /* SimParcel.app */,
+				A2000000000000000000000D /* SimParcelTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000004 /* Artwork */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000006 /* AppIcon-Source.png */,
+			);
+			path = Artwork;
+			sourceTree = "<group>";
+		};
+		A40000000000000000000005 /* SimParcelTests */ = {
+			isa = PBXGroup;
+			children = (
+				A20000000000000000000011 /* FilesStorageTests.swift */,
+				A2000000000000000000000C /* QueueItemTests.swift */,
+				A2000000000000000000000B /* SimulatorListTests.swift */,
+				A2000000000000000000000F /* SimulatorServiceTests.swift */,
+			);
+			path = SimParcelTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A50000000000000000000001 /* SimParcel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000002 /* Build configuration list for PBXNativeTarget "SimParcel" */;
+			buildPhases = (
+				A70000000000000000000001 /* Sources */,
+				A30000000000000000000001 /* Frameworks */,
+				A70000000000000000000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimParcel;
+			productName = SimParcel;
+			productReference = A20000000000000000000004 /* SimParcel.app */;
+			productType = "com.apple.product-type.application";
+		};
+		A50000000000000000000002 /* SimParcelTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A80000000000000000000003 /* Build configuration list for PBXNativeTarget "SimParcelTests" */;
+			buildPhases = (
+				A70000000000000000000003 /* Sources */,
+				A30000000000000000000002 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SimParcelTests;
+			productName = SimParcelTests;
+			productReference = A2000000000000000000000D /* SimParcelTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A60000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2700;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					A50000000000000000000001 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					A50000000000000000000002 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+				};
+			};
+			buildConfigurationList = A80000000000000000000001 /* Build configuration list for PBXProject "SimParcel" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A40000000000000000000001;
+			productRefGroup = A40000000000000000000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A50000000000000000000001 /* SimParcel */,
+				A50000000000000000000002 /* SimParcelTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A70000000000000000000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000000000000000000000D /* AppIcon.icon in Resources */,
+				A10000000000000000000004 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A70000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* SimParcelApp.swift in Sources */,
+				A10000000000000000000007 /* AppModel.swift in Sources */,
+				A10000000000000000000002 /* ContentView.swift in Sources */,
+				A10000000000000000000010 /* FilesStorage.swift in Sources */,
+				A10000000000000000000008 /* QueueGrid.swift in Sources */,
+				A10000000000000000000006 /* QueueItem.swift in Sources */,
+				A10000000000000000000005 /* Simulator.swift in Sources */,
+				A10000000000000000000003 /* SimulatorService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A70000000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000011 /* FilesStorage.swift in Sources */,
+				A1000000000000000000000A /* QueueItem.swift in Sources */,
+				A10000000000000000000009 /* Simulator.swift in Sources */,
+				A1000000000000000000000E /* SimulatorService.swift in Sources */,
+				A10000000000000000000012 /* FilesStorageTests.swift in Sources */,
+				A1000000000000000000000C /* QueueItemTests.swift in Sources */,
+				A1000000000000000000000B /* SimulatorListTests.swift in Sources */,
+				A1000000000000000000000F /* SimulatorServiceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A90000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A90000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		A90000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D83JQSBRML;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SimParcel";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Vadim Katenin. MIT License.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vadimkatenin.SimParcel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		A90000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = D83JQSBRML;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SimParcel";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Vadim Katenin. MIT License.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vadimkatenin.SimParcel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		A90000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vadimkatenin.SimParcelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A90000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vadimkatenin.SimParcelTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A80000000000000000000001 /* Build configuration list for PBXProject "SimParcel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A90000000000000000000001 /* Debug */,
+				A90000000000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000000000000000000002 /* Build configuration list for PBXNativeTarget "SimParcel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A90000000000000000000003 /* Debug */,
+				A90000000000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A80000000000000000000003 /* Build configuration list for PBXNativeTarget "SimParcelTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A90000000000000000000005 /* Debug */,
+				A90000000000000000000006 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A60000000000000000000001 /* Project object */;
+}
