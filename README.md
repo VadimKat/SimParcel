@@ -6,7 +6,10 @@
 
 Xcode 27 replaced Simulator.app with Device Hub, which no longer accepts files dropped from Finder. SimParcel is a small native macOS app that brings that workflow back: pick a simulator, drop your files, click **Send to Simulator**. No terminal, no `xcrun simctl addmedia` by hand.
 
-<img src="Artwork/Screenshot.png" alt="SimParcel window with a queue of photos and videos" width="640">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Artwork/Screenshot-Dark.png">
+  <img src="Artwork/Screenshot.png" alt="SimParcel window with a queue of an app, a Live Photo, a contact, photos, a video, a PDF, a push payload and a link" width="720">
+</picture>
 
 ## Features
 
