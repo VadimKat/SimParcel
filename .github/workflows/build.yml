@@ -1,0 +1,24 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-26 # Xcode 26+ is needed to compile the Icon Composer app icon
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build and test
+        run: >
+          xcodebuild
+          -project SimulatorMediaDrop.xcodeproj
+          -scheme SimulatorMediaDrop
+          -destination 'platform=macOS'
+          CODE_SIGN_IDENTITY=-
+          test
