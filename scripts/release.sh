@@ -203,7 +203,10 @@ git push origin main "$TAG"
     printf '\n### Checksums\n\n```\n%s  %s\n%s  %s\n```\n' "$ZIP_SHA" "$(basename "$ZIP")" "$DMG_SHA" "$(basename "$DMG")"
 } > "$BUILD/github-notes.md"
 
-gh release create "$TAG" "$DMG" "$ZIP" "$BUILD/appcast.xml" \
+# An unversioned copy lets https://katenin.dev/simparcel link to releases/latest/download/SimParcel.dmg.
+cp "$DMG" "$BUILD/$APP_NAME.dmg"
+
+gh release create "$TAG" "$DMG" "$ZIP" "$BUILD/$APP_NAME.dmg" "$BUILD/appcast.xml" \
     --repo "$REPO" \
     --title "$APP_NAME $VERSION" \
     --notes-file "$BUILD/github-notes.md"
