@@ -228,7 +228,7 @@ cask "simparcel" do
   end
 
   auto_updates true
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "$APP_NAME.app"
 
