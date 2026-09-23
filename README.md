@@ -48,25 +48,29 @@ A payload needs an `aps` dictionary and a `Simulator Target Bundle` key with you
 
 ## Installation
 
-### Download
-
-Download the latest `SimParcel.zip` from [Releases](../../releases), unzip it, and move the app to `/Applications`.
-
-If a release isn't notarized, macOS blocks it on first launch. To open it anyway, go to **System Settings → Privacy & Security** and click **Open Anyway**, or run:
+### Homebrew
 
 ```bash
-xattr -dr com.apple.quarantine "/Applications/SimParcel.app"
+brew install --cask vadimkat/tap/simparcel
 ```
+
+### Download
+
+Download `SimParcel-<version>.dmg` from [Releases](https://github.com/VadimKat/SimParcel/releases/latest), open it and drag SimParcel to Applications. The app is signed with Developer ID and notarized by Apple.
+
+### Updates
+
+SimParcel checks for updates once a day with [Sparkle](https://sparkle-project.org) and installs them when you agree. You can also choose **SimParcel → Check for Updates…**. Updates are signed, and the app installs only updates signed with the project's key.
 
 ### Build from source
 
 ```bash
-git clone https://github.com/<your-account>/SimParcel.git
+git clone https://github.com/VadimKat/SimParcel.git
 cd SimParcel
 open SimParcel.xcodeproj
 ```
 
-Run the **SimParcel** scheme on **My Mac**. There are no third-party dependencies.
+Run the **SimParcel** scheme on **My Mac**. Xcode fetches [Sparkle](https://github.com/sparkle-project/Sparkle), the only dependency, with Swift Package Manager.
 
 To build and test from the command line:
 
@@ -96,11 +100,13 @@ Because the app runs `xcrun`, it can't use the App Sandbox and isn't distributed
 
 ## Releasing
 
-`scripts/release.sh` archives the app, signs it with Developer ID, notarizes and staples it, and writes a zip and a DMG to `build/release` with their SHA-256 checksums. It needs a Developer ID Application certificate and notarization credentials stored once in the keychain:
+Write the release notes to `release-notes/<version>.md`, then run:
 
 ```bash
-xcrun notarytool store-credentials "SimParcel" --apple-id "<Apple ID>" --team-id "<Team ID>"
+scripts/release.sh 1.1.0
 ```
+
+The script sets the version, builds a universal app, signs it with Developer ID, notarizes and staples the app and the DMG, and writes a Sparkle appcast. After you confirm, it tags the release, publishes it on GitHub with the zip, DMG and appcast, and updates the Homebrew cask. The one-time setup it needs is listed at the top of the script.
 
 ## License
 

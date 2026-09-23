@@ -25,6 +25,7 @@
 		A10000000000000000000010 /* FilesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* FilesStorage.swift */; };
 		A10000000000000000000011 /* FilesStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000010 /* FilesStorage.swift */; };
 		A10000000000000000000012 /* FilesStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20000000000000000000011 /* FilesStorageTests.swift */; };
+		A10000000000000000000013 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A90000000000000000000011 /* Sparkle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 		A2000000000000000000000F /* SimulatorServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorServiceTests.swift; sourceTree = "<group>"; };
 		A20000000000000000000010 /* FilesStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesStorage.swift; sourceTree = "<group>"; };
 		A20000000000000000000011 /* FilesStorageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilesStorageTests.swift; sourceTree = "<group>"; };
+		A20000000000000000000012 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A10000000000000000000013 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +91,7 @@
 				A20000000000000000000003 /* SimulatorService.swift */,
 				A2000000000000000000000E /* AppIcon.icon */,
 				A20000000000000000000005 /* Assets.xcassets */,
+				A20000000000000000000012 /* Info.plist */,
 			);
 			path = SimParcel;
 			sourceTree = "<group>";
@@ -136,6 +140,9 @@
 			dependencies = (
 			);
 			name = SimParcel;
+			packageProductDependencies = (
+				A90000000000000000000011 /* Sparkle */,
+			);
 			productName = SimParcel;
 			productReference = A20000000000000000000004 /* SimParcel.app */;
 			productType = "com.apple.product-type.application";
@@ -183,6 +190,9 @@
 				Base,
 			);
 			mainGroup = A40000000000000000000001;
+			packageReferences = (
+				A90000000000000000000010 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			productRefGroup = A40000000000000000000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -282,6 +292,7 @@
 				DEVELOPMENT_TEAM = D83JQSBRML;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SimParcel/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "SimParcel";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Vadym Katenin. MIT License.";
@@ -304,6 +315,7 @@
 				DEVELOPMENT_TEAM = D83JQSBRML;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SimParcel/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "SimParcel";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Vadym Katenin. MIT License.";
@@ -371,6 +383,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A90000000000000000000010 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A90000000000000000000011 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A90000000000000000000010 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A60000000000000000000001 /* Project object */;
 }
