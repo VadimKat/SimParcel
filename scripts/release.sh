@@ -23,7 +23,7 @@ step() {
 VERSION=$(xcodebuild -project SimParcel.xcodeproj -scheme SimParcel -configuration Release -showBuildSettings 2>/dev/null \
     | awk '$1 == "MARKETING_VERSION" { print $3; exit }')
 
-if ! security find-identity -v -p codesigning | grep -q "Developer ID Application"; then
+if [[ $(security find-identity -v -p codesigning) != *"Developer ID Application"* ]]; then
     echo "No \"Developer ID Application\" certificate found. Create one in Xcode → Settings → Accounts → Manage Certificates." >&2
     exit 1
 fi
@@ -49,8 +49,13 @@ xcodebuild -exportArchive \
 
 APP="$BUILD/export/$APP_NAME.app"
 codesign --verify --strict --deep "$APP"
-codesign -dv "$APP" 2>&1 | grep -q "Authority=Developer ID Application" \
-    || { echo "The exported app isn't signed with Developer ID." >&2; exit 1; }
+# Read the signature into a variable: piping into `grep -q` would fail under pipefail when grep exits early.
+SIGNATURE=$(codesign -dv --verbose=2 "$APP" 2>&1)
+IDENTITY=$(awk -F= '/^Authority=Developer ID Application/ { print $2; exit }' <<< "$SIGNATURE")
+if [[ -z "$IDENTITY" ]]; then
+    echo "The exported app isn't signed with Developer ID." >&2
+    exit 1
+fi
 
 step "Notarizing the app"
 ditto -c -k --keepParent "$APP" "$BUILD/notarize.zip"
@@ -70,7 +75,6 @@ ln -s /Applications "$STAGING/Applications"
 hdiutil create -volname "$APP_NAME" -srcfolder "$STAGING" -ov -format UDZO "$DMG" -quiet
 rm -rf "$STAGING"
 
-IDENTITY=$(codesign -dv "$APP" 2>&1 | awk -F= '/^Authority=Developer ID Application/ { print $2; exit }')
 codesign --sign "$IDENTITY" --timestamp "$DMG"
 
 step "Notarizing the DMG"
