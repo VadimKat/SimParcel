@@ -4,6 +4,11 @@ import UniformTypeIdentifiers
 struct ContentView: View {
     @Environment(AppModel.self) private var model
     @State private var isDropTargeted = false
+    @State private var linkText = ""
+
+    static let pickableTypes: [UTType] = [
+        .image, .movie, .vCard, .applicationBundle, .folder,
+    ] + [UTType(filenameExtension: "apns")].compactMap { $0 }
 
     var body: some View {
         @Bindable var model = model
@@ -25,9 +30,9 @@ struct ContentView: View {
                 .padding(.vertical, 12)
                 .background(.bar)
         }
-        .frame(minWidth: 540, minHeight: 460)
+        .frame(minWidth: 560, minHeight: 460)
         .dropDestination(for: URL.self) { urls, _ in
-            guard !model.isImporting else {
+            guard !model.isSending else {
                 return false
             }
 
@@ -37,12 +42,12 @@ struct ContentView: View {
             return true
         } isTargeted: { isTargeted in
             withAnimation(.easeOut(duration: 0.15)) {
-                isDropTargeted = isTargeted && !model.isImporting
+                isDropTargeted = isTargeted && !model.isSending
             }
         }
         .fileImporter(
             isPresented: $model.isFilePickerPresented,
-            allowedContentTypes: [.image, .movie, .folder],
+            allowedContentTypes: Self.pickableTypes,
             allowsMultipleSelection: true
         ) { result in
             switch result {
@@ -53,6 +58,22 @@ struct ContentView: View {
             case .failure(let error):
                 model.reportFilePickerError(error)
             }
+        }
+        .alert("Add Link", isPresented: $model.isLinkPromptPresented) {
+            TextField("myapp://path", text: $linkText)
+            Button("Add") {
+                let text = linkText
+                linkText = ""
+                Task {
+                    await model.addLink(text)
+                }
+            }
+            .keyboardShortcut(.defaultAction)
+            Button("Cancel", role: .cancel) {
+                linkText = ""
+            }
+        } message: {
+            Text("The link opens in the simulator, so you can test web pages, universal links and deep links.")
         }
         .task {
             await model.refreshDevices()
@@ -67,7 +88,7 @@ struct ContentView: View {
                     .padding(20)
                     .transition(.opacity)
             } else {
-                MediaGrid()
+                QueueGrid()
                     .transition(.opacity)
                     .overlay {
                         if isDropTargeted {
@@ -91,7 +112,7 @@ private struct SimulatorBar: View {
         @Bindable var model = model
 
         HStack(spacing: 12) {
-            Image(systemName: model.selectedDevice?.symbolName ?? "iphone")
+            Image(systemName: symbolName)
                 .font(.system(size: 20, weight: .regular))
                 .foregroundStyle(.tint)
                 .frame(width: 36, height: 36)
@@ -107,6 +128,11 @@ private struct SimulatorBar: View {
                         .foregroundStyle(.secondary)
                 } else {
                     Picker("Simulator", selection: $model.selectedDeviceID) {
+                        Text("All Running Simulators")
+                            .tag(AppModel.allRunningID)
+
+                        Divider()
+
                         ForEach(model.runtimeGroups) { group in
                             Section(group.runtime.name) {
                                 ForEach(group.devices) { device in
@@ -120,9 +146,7 @@ private struct SimulatorBar: View {
                     .fixedSize()
                     .disabled(model.isBusy)
 
-                    if let device = model.selectedDevice {
-                        DeviceStateLabel(device: device)
-                    }
+                    TargetStateLabel()
                 }
             }
 
@@ -153,22 +177,59 @@ private struct SimulatorBar: View {
         .labelStyle(.iconOnly)
         .controlSize(.large)
     }
+
+    private var symbolName: String {
+        if model.isAllRunningSelected {
+            return "rectangle.stack"
+        }
+
+        return model.selectedDevice?.symbolName ?? "iphone"
+    }
 }
 
-private struct DeviceStateLabel: View {
-    let device: SimulatorDevice
+private struct TargetStateLabel: View {
+    @Environment(AppModel.self) private var model
 
     var body: some View {
         HStack(spacing: 5) {
             Circle()
-                .fill(device.isBooted ? Color.green : Color.secondary.opacity(0.5))
+                .fill(isRunning ? Color.green : Color.secondary.opacity(0.5))
                 .frame(width: 7, height: 7)
                 .accessibilityHidden(true)
 
-            Text(device.isBooted ? "\(device.runtime.name) · Running" : "\(device.runtime.name) · Starts automatically on import")
+            Text(text)
+                .lineLimit(1)
+                .truncationMode(.tail)
         }
         .font(.caption)
         .foregroundStyle(.secondary)
+        .help(text)
+    }
+
+    private var isRunning: Bool {
+        !model.targets.isEmpty && model.targets.allSatisfy(\.isBooted)
+    }
+
+    private var text: String {
+        if model.isAllRunningSelected {
+            let running = model.runningDevices
+            switch running.count {
+            case 0:
+                return "No simulators are running"
+            case 1:
+                return "1 running · \(running[0].name)"
+            default:
+                return "\(running.count) running · \(running.map(\.name).joined(separator: ", "))"
+            }
+        }
+
+        guard let device = model.selectedDevice else {
+            return "Choose a simulator"
+        }
+
+        return device.isBooted
+            ? "\(device.runtime.name) · Running"
+            : "\(device.runtime.name) · Starts automatically when you send"
     }
 }
 
@@ -187,18 +248,25 @@ private struct EmptyDropZone: View {
                 .accessibilityHidden(true)
 
             VStack(spacing: 4) {
-                Text(isTargeted ? "Release to add" : "Drop photos and videos here")
+                Text(isTargeted ? "Release to add" : "Drop photos, videos and more")
                     .font(.title3.weight(.semibold))
 
-                Text("Folders and Live Photos are supported")
+                Text("Live Photos, contacts, apps, push payloads, links and folders work too")
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
 
-            Button("Choose Files…") {
-                model.isFilePickerPresented = true
+            HStack(spacing: 10) {
+                Button("Choose Files…") {
+                    model.isFilePickerPresented = true
+                }
+
+                Button("Add Link…") {
+                    model.isLinkPromptPresented = true
+                }
             }
             .controlSize(.large)
-            .disabled(model.isImporting)
+            .disabled(model.isSending)
         }
         .padding(24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -214,7 +282,7 @@ private struct EmptyDropZone: View {
                 )
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Drop zone for photos and videos")
+        .accessibilityLabel("Drop zone for photos, videos and other files")
     }
 }
 
@@ -248,30 +316,37 @@ private struct FooterBar: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             if !model.items.isEmpty {
-                Button("Add More…") {
-                    model.isFilePickerPresented = true
+                Menu("Add More") {
+                    Button("Choose Files…") {
+                        model.isFilePickerPresented = true
+                    }
+
+                    Button("Add Link…") {
+                        model.isLinkPromptPresented = true
+                    }
                 }
-                .disabled(model.isImporting)
+                .fixedSize()
+                .disabled(model.isSending)
             }
 
             Button {
                 Task {
-                    await model.importAll()
+                    await model.sendAll()
                 }
             } label: {
-                Text(importTitle)
-                    .frame(minWidth: 110)
+                Text(sendTitle)
+                    .frame(minWidth: 120)
             }
             .buttonStyle(.borderedProminent)
             .keyboardShortcut(.return, modifiers: .command)
-            .disabled(!model.canImport)
+            .disabled(!model.canSend)
         }
         .controlSize(.large)
     }
 
-    private var importTitle: String {
-        let count = model.items.count
-        return count > 1 ? "Add \(count) to Photos" : "Add to Photos"
+    private var sendTitle: String {
+        let count = model.targets.count
+        return model.isAllRunningSelected && count > 1 ? "Send to \(count) Simulators" : "Send to Simulator"
     }
 }
 
@@ -280,10 +355,10 @@ private struct StatusView: View {
 
     var body: some View {
         Group {
-            if model.isImporting && model.importTotal > 0 {
+            if model.isSending && model.totalSteps > 0 {
                 VStack(alignment: .leading, spacing: 5) {
                     statusText
-                    ProgressView(value: Double(model.importedCount), total: Double(model.importTotal))
+                    ProgressView(value: Double(model.completedSteps), total: Double(model.totalSteps))
                         .progressViewStyle(.linear)
                         .frame(maxWidth: 220)
                 }
@@ -323,13 +398,16 @@ private struct StatusView: View {
     }
 
     private var idleMessage: String {
-        let count = model.items.count
-        switch count {
+        if model.isAllRunningSelected && model.targets.isEmpty {
+            return "Start a simulator, or choose one from the list."
+        }
+
+        switch model.items.count {
         case 0:
-            return "Add photos or videos to import."
+            return "Add something to send."
         case 1:
             return "1 item ready"
-        default:
+        case let count:
             return "\(count) items ready"
         }
     }

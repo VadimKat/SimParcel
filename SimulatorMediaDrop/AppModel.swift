@@ -12,17 +12,20 @@ final class AppModel {
         case failure(String, detail: String? = nil)
     }
 
+    /// Selection value that sends items to every running simulator.
+    static let allRunningID = "all-running"
     private static let selectedDeviceKey = "selectedSimulatorID"
 
     private(set) var devices: [SimulatorDevice] = []
-    private(set) var items: [MediaItem] = []
+    private(set) var items: [QueueItem] = []
     private(set) var isRefreshing = false
-    private(set) var isImporting = false
-    private(set) var importingItemID: MediaItem.ID?
-    private(set) var importedCount = 0
-    private(set) var importTotal = 0
+    private(set) var isSending = false
+    private(set) var sendingItemID: QueueItem.ID?
+    private(set) var completedSteps = 0
+    private(set) var totalSteps = 0
     private(set) var status: Status = .idle
     var isFilePickerPresented = false
+    var isLinkPromptPresented = false
 
     var selectedDeviceID: String = UserDefaults.standard.string(forKey: AppModel.selectedDeviceKey) ?? "" {
         didSet {
@@ -34,16 +37,33 @@ final class AppModel {
         SimulatorList.grouped(devices)
     }
 
+    var runningDevices: [SimulatorDevice] {
+        runtimeGroups.flatMap(\.devices).filter(\.isBooted)
+    }
+
+    var isAllRunningSelected: Bool {
+        selectedDeviceID == Self.allRunningID
+    }
+
     var selectedDevice: SimulatorDevice? {
         devices.first { $0.id == selectedDeviceID }
     }
 
-    var isBusy: Bool {
-        isRefreshing || isImporting
+    /// The simulators that the next send goes to.
+    var targets: [SimulatorDevice] {
+        if isAllRunningSelected {
+            return runningDevices
+        }
+
+        return selectedDevice.map { [$0] } ?? []
     }
 
-    var canImport: Bool {
-        !items.isEmpty && selectedDevice != nil && !isBusy
+    var isBusy: Bool {
+        isRefreshing || isSending
+    }
+
+    var canSend: Bool {
+        !items.isEmpty && !targets.isEmpty && !isBusy
     }
 
     var failedCount: Int {
@@ -63,7 +83,7 @@ final class AppModel {
         do {
             devices = try await SimulatorService.availableDevices()
 
-            if selectedDevice == nil {
+            if selectedDevice == nil && !isAllRunningSelected {
                 selectedDeviceID = SimulatorList.preferredDevice(in: devices)?.id ?? ""
             }
 
@@ -78,18 +98,18 @@ final class AppModel {
     }
 
     func add(_ urls: [URL]) async {
-        guard !isImporting, !urls.isEmpty else {
+        guard !isSending, !urls.isEmpty else {
             return
         }
 
-        let (media, skipped) = await Task.detached(priority: .userInitiated) {
-            MediaFiles.collect(from: urls)
+        let (supported, skipped) = await Task.detached(priority: .userInitiated) {
+            DroppedFiles.collect(from: urls)
         }.value
 
-        items = MediaItem.merging(media, into: items)
+        items = QueueItem.merging(supported, into: items)
 
-        if let summary = MediaFiles.skippedSummary(skipped, addedMedia: !media.isEmpty) {
-            status = media.isEmpty
+        if let summary = DroppedFiles.skippedSummary(skipped, addedAny: !supported.isEmpty) {
+            status = supported.isEmpty
                 ? .failure(summary.message, detail: summary.detail)
                 : .info(summary.message, detail: summary.detail)
         } else {
@@ -97,12 +117,23 @@ final class AppModel {
         }
     }
 
+    /// Adds a typed web link or deep link, such as `https://example.com` or `myapp://settings`.
+    func addLink(_ text: String) async {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let url = URL(string: trimmed), let scheme = url.scheme, !scheme.isEmpty, !url.isFileURL else {
+            status = .failure("“\(trimmed)” isn’t a valid link. Include a scheme, such as https:// or myapp://.")
+            return
+        }
+
+        await add([url])
+    }
+
     func reportFilePickerError(_ error: Error) {
         status = .failure("Could not open files: \(error.localizedDescription)")
     }
 
-    func remove(_ item: MediaItem) {
-        guard !isImporting else {
+    func remove(_ item: QueueItem) {
+        guard !isSending else {
             return
         }
 
@@ -113,7 +144,7 @@ final class AppModel {
     }
 
     func removeAll() {
-        guard !isImporting else {
+        guard !isSending else {
             return
         }
 
@@ -121,62 +152,71 @@ final class AppModel {
         status = .idle
     }
 
-    func importAll() async {
-        guard canImport, let device = selectedDevice else {
+    func sendAll() async {
+        let targets = targets
+        guard canSend else {
             return
         }
 
-        isImporting = true
-        importedCount = 0
-        importTotal = items.count
+        isSending = true
+        completedSteps = 0
+        totalSteps = items.count * targets.count
+        status = .working("Sending…")
         defer {
-            isImporting = false
-            importingItemID = nil
+            isSending = false
+            sendingItemID = nil
         }
 
-        do {
-            if !device.isBooted {
-                status = .working("Starting \(device.name)…")
+        if targets.count == 1, let device = targets.first {
+            do {
+                if !device.isBooted {
+                    status = .working("Starting \(device.name)…")
+                }
+                try await SimulatorService.bootIfNeeded(device)
+            } catch {
+                status = .failure("Could not start \(device.name): \(error.localizedDescription)")
+                return
             }
-            try await SimulatorService.bootIfNeeded(device)
-        } catch {
-            status = .failure("Could not start \(device.name): \(error.localizedDescription)")
-            return
         }
 
         var succeeded = 0
         var lastFailure: String?
 
-        for item in items {
-            importingItemID = item.id
-            status = .working("Importing \(importedCount + 1) of \(importTotal)…")
+        for item in items.sorted(by: { $0.kind.sendOrder < $1.kind.sendOrder }) {
+            sendingItemID = item.id
+            var failures: [String] = []
 
-            do {
-                // simctl crashes instead of reporting an error when a file is missing.
-                if let missing = item.files.first(where: { !FileManager.default.fileExists(atPath: $0.path) }) {
-                    throw SimulatorServiceError.commandFailed("\(missing.lastPathComponent) no longer exists.")
+            for device in targets {
+                status = .working("Sending \(completedSteps + 1) of \(totalSteps)…")
+
+                do {
+                    try await SimulatorService.send(item, to: device)
+                } catch {
+                    let message = error.localizedDescription
+                    failures.append(targets.count > 1 ? "\(device.name): \(message)" : message)
                 }
 
-                try await SimulatorService.addMedia(item.files, to: device)
-                items.removeAll { $0.id == item.id }
-                succeeded += 1
-            } catch {
-                let message = error.localizedDescription
-                lastFailure = message
-                if let index = items.firstIndex(where: { $0.id == item.id }) {
-                    items[index].failure = message
-                }
+                completedSteps += 1
             }
 
-            importedCount += 1
+            if failures.isEmpty {
+                items.removeAll { $0.id == item.id }
+                succeeded += 1
+            } else if let index = items.firstIndex(where: { $0.id == item.id }) {
+                let message = failures.joined(separator: "\n")
+                items[index].failure = message
+                lastFailure = message
+            }
         }
 
         let noun = succeeded == 1 ? "item" : "items"
+        let destination = targets.count == 1 ? targets[0].name : "\(targets.count) simulators"
         if let lastFailure {
-            let failed = importTotal - succeeded
-            status = .failure("Added \(succeeded) \(noun). \(failed) failed: \(lastFailure)")
+            let failed = items.filter { $0.failure != nil }.count
+            let reason = failed == 1 ? ": \(lastFailure.split(whereSeparator: \.isNewline).first ?? "")" : "."
+            status = .failure("Sent \(succeeded) \(noun). \(failed) failed\(reason)", detail: lastFailure)
         } else {
-            status = .success("Added \(succeeded) \(noun) to \(device.name).")
+            status = .success("Sent \(succeeded) \(noun) to \(destination).")
         }
 
         await refreshDevices()
@@ -187,9 +227,9 @@ final class AppModel {
             return
         }
 
-        isImporting = true
+        isSending = true
         defer {
-            isImporting = false
+            isSending = false
         }
 
         if !device.isBooted {

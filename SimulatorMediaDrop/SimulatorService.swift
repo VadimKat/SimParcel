@@ -43,9 +43,26 @@ enum SimulatorService {
         try await openSimulatorApp(showing: device)
     }
 
-    /// Imports files with one `simctl addmedia` call, so a Live Photo's image and video are paired.
-    static func addMedia(_ files: [URL], to device: SimulatorDevice) async throws {
-        _ = try await simctl(["addmedia", device.id] + files.map(\.path))
+    /// Sends a queue item with the `simctl` command for its kind.
+    static func send(_ item: QueueItem, to device: SimulatorDevice) async throws {
+        // simctl crashes instead of reporting an error when a file is missing.
+        if let missing = item.urls.first(where: { $0.isFileURL && !FileManager.default.fileExists(atPath: $0.path) }) {
+            throw SimulatorServiceError.commandFailed("\(missing.lastPathComponent) no longer exists.")
+        }
+
+        switch item.kind {
+        case .photo, .video, .livePhoto, .contact:
+            // One call for all files, so a Live Photo's image and video are paired.
+            _ = try await simctl(["addmedia", device.id] + item.urls.map(\.path))
+        case .app:
+            _ = try await simctl(["install", device.id, item.urls[0].path])
+        case .push:
+            let payload = item.urls[0]
+            try PushPayload.validate(try Data(contentsOf: payload))
+            _ = try await simctl(["push", device.id, payload.path])
+        case .link:
+            _ = try await simctl(["openurl", device.id, item.urls[0].absoluteString])
+        }
     }
 
     private static func openSimulatorApp(showing device: SimulatorDevice) async throws {
@@ -114,14 +131,23 @@ enum SimulatorService {
         return outputData
     }
 
-    /// Keeps error output readable: simctl sometimes crashes and prints an exception with a full stack trace.
-    private static func conciseMessage(_ output: String) -> String {
+    /// Keeps error output readable: simctl sometimes crashes and prints an exception with a full stack trace,
+    /// and otherwise puts the useful part in the innermost "Underlying error" line.
+    static func conciseMessage(_ output: String) -> String {
+        if output.contains("Source is not authorized") {
+            return "The app isn’t allowed to show notifications. Open it in the simulator, allow notifications, then try again."
+        }
+
         if let reason = output.range(of: "reason: '"),
            let end = output[reason.upperBound...].firstIndex(of: "'") {
             return "simctl crashed: \(output[reason.upperBound..<end])"
         }
 
         let lines = output.split(whereSeparator: \.isNewline)
+        if let detail = lines.last(where: { $0.hasPrefix("\t") }) {
+            return detail.trimmingCharacters(in: .whitespaces)
+        }
+
         return lines.prefix(3).joined(separator: "\n") + (lines.count > 3 ? "…" : "")
     }
 

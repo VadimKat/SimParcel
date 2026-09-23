@@ -18,7 +18,13 @@ struct SimulatorMediaDropApp: App {
                     model.isFilePickerPresented = true
                 }
                 .keyboardShortcut("o")
-                .disabled(model.isImporting)
+                .disabled(model.isSending)
+
+                Button("Add Link…") {
+                    model.isLinkPromptPresented = true
+                }
+                .keyboardShortcut("l")
+                .disabled(model.isSending)
             }
         }
     }

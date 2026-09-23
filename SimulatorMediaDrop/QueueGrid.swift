@@ -1,7 +1,7 @@
 import QuickLookThumbnailing
 import SwiftUI
 
-struct MediaGrid: View {
+struct QueueGrid: View {
     @Environment(AppModel.self) private var model
 
     private let columns = [GridItem(.adaptive(minimum: 112, maximum: 150), spacing: 14)]
@@ -29,7 +29,7 @@ struct MediaGrid: View {
                     }
                 }
                 .buttonStyle(.borderless)
-                .disabled(model.isImporting)
+                .disabled(model.isSending)
             }
             .padding(.horizontal, 20)
             .padding(.top, 14)
@@ -38,7 +38,7 @@ struct MediaGrid: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(model.items) { item in
-                        MediaTile(item: item, isImporting: model.importingItemID == item.id)
+                        QueueTile(item: item, isSending: model.sendingItemID == item.id)
                             .transition(.scale(scale: 0.8).combined(with: .opacity))
                     }
                 }
@@ -55,27 +55,33 @@ struct MediaGrid: View {
     }
 }
 
-private struct MediaTile: View {
+private struct QueueTile: View {
     @Environment(AppModel.self) private var model
     @State private var isHovered = false
 
-    let item: MediaItem
-    let isImporting: Bool
+    let item: QueueItem
+    let isSending: Bool
 
     var body: some View {
         VStack(spacing: 6) {
-            Thumbnail(file: item.previewFile)
+            Thumbnail(item: item)
                 .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .overlay {
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
                         .strokeBorder(item.failure == nil ? AnyShapeStyle(.separator) : AnyShapeStyle(.red), lineWidth: item.failure == nil ? 0.5 : 2)
                 }
                 .overlay(alignment: .bottomLeading) {
-                    kindBadge
-                        .padding(6)
+                    if let badge = item.kind.badge {
+                        Label(badge.title, systemImage: badge.symbol)
+                            .font(.caption2.weight(.semibold))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(.ultraThinMaterial, in: Capsule())
+                            .padding(6)
+                    }
                 }
                 .overlay(alignment: .topTrailing) {
-                    if isHovered && !model.isImporting {
+                    if isHovered && !model.isSending {
                         removeButton
                             .padding(5)
                             .transition(.opacity)
@@ -91,7 +97,7 @@ private struct MediaTile: View {
                     }
                 }
                 .overlay {
-                    if isImporting {
+                    if isSending {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .fill(.regularMaterial)
                             .overlay {
@@ -113,10 +119,17 @@ private struct MediaTile: View {
                 isHovered = hovering
             }
         }
-        .help(item.failure.map { "Import failed: \($0)" } ?? item.files.map(\.path).joined(separator: "\n"))
+        .help(item.failure.map { "Failed: \($0)" } ?? item.urls.map(\.displayPath).joined(separator: "\n"))
         .contextMenu {
-            Button("Show in Finder") {
-                NSWorkspace.shared.activateFileViewerSelecting(item.files)
+            if item.kind == .link {
+                Button("Copy Link") {
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(item.name, forType: .string)
+                }
+            } else {
+                Button("Show in Finder") {
+                    NSWorkspace.shared.activateFileViewerSelecting(item.urls)
+                }
             }
 
             Divider()
@@ -124,33 +137,13 @@ private struct MediaTile: View {
             Button("Remove", role: .destructive) {
                 model.remove(item)
             }
-            .disabled(model.isImporting)
+            .disabled(model.isSending)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityAction(named: "Remove") {
             model.remove(item)
         }
-    }
-
-    @ViewBuilder
-    private var kindBadge: some View {
-        switch item.kind {
-        case .photo:
-            EmptyView()
-        case .video:
-            badge("video.fill", "Video")
-        case .livePhoto:
-            badge("livephoto", "Live")
-        }
-    }
-
-    private func badge(_ symbol: String, _ title: String) -> some View {
-        Label(title, systemImage: symbol)
-            .font(.caption2.weight(.semibold))
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(.ultraThinMaterial, in: Capsule())
     }
 
     private var removeButton: some View {
@@ -167,45 +160,83 @@ private struct MediaTile: View {
     }
 
     private var accessibilityLabel: String {
-        let kind = switch item.kind {
-        case .photo: "Photo"
-        case .video: "Video"
-        case .livePhoto: "Live Photo"
-        }
-
-        if let failure = item.failure {
-            return "\(kind), \(item.name), import failed: \(failure)"
-        }
-
-        return "\(kind), \(item.name)"
+        let label = "\(item.kind.title), \(item.name)"
+        return item.failure.map { "\(label), failed: \($0)" } ?? label
     }
 }
 
 private struct Thumbnail: View {
-    let file: URL
+    let item: QueueItem
     @State private var image: NSImage?
 
     var body: some View {
-        // The square container defines the size; the image fills it and is cropped, never widening the tile.
+        // The square container defines the size; the content fills or fits it and never widens the tile.
         Rectangle()
-            .fill(.quaternary)
+            .fill(background)
             .aspectRatio(1, contentMode: .fit)
             .overlay {
-                if let image {
-                    Image(nsImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .transition(.opacity)
-                } else {
-                    Image(systemName: "photo")
-                        .font(.title)
-                        .foregroundStyle(.tertiary)
+                switch item.kind {
+                case .push, .link:
+                    symbol
+                case .photo, .video, .livePhoto:
+                    if let image {
+                        Image(nsImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .transition(.opacity)
+                    } else {
+                        placeholder
+                    }
+                case .contact, .app:
+                    if let image {
+                        Image(nsImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .padding(18)
+                            .transition(.opacity)
+                    } else {
+                        placeholder
+                    }
                 }
             }
             .clipped()
-            .task(id: file) {
-                image = await Self.thumbnail(for: file)
+            .task(id: item.previewURL) {
+                guard item.previewURL.isFileURL else {
+                    return
+                }
+                image = await Self.thumbnail(for: item.previewURL)
             }
+    }
+
+    private var background: AnyShapeStyle {
+        switch item.kind {
+        case .push, .link:
+            AnyShapeStyle(.tint.opacity(0.12))
+        default:
+            AnyShapeStyle(.quaternary)
+        }
+    }
+
+    private var symbol: some View {
+        VStack(spacing: 6) {
+            Image(systemName: item.kind == .push ? "bell.badge.fill" : "link")
+                .font(.system(size: 34, weight: .medium))
+                .foregroundStyle(.tint)
+
+            if item.kind == .link, let host = item.urls.first?.host() ?? item.urls.first?.scheme {
+                Text(host)
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .padding(.horizontal, 8)
+            }
+        }
+    }
+
+    private var placeholder: some View {
+        Image(systemName: "photo")
+            .font(.title)
+            .foregroundStyle(.tertiary)
     }
 
     private static func thumbnail(for file: URL) async -> NSImage? {
@@ -221,5 +252,25 @@ private struct Thumbnail: View {
         }
 
         return NSImage(cgImage: cgImage, size: .zero)
+    }
+}
+
+private extension ItemKind {
+    var badge: (title: String, symbol: String)? {
+        switch self {
+        case .photo: nil
+        case .video: ("Video", "video.fill")
+        case .livePhoto: ("Live", "livephoto")
+        case .contact: ("Contact", "person.crop.circle")
+        case .app: ("App", "app.badge")
+        case .push: ("Push", "bell.fill")
+        case .link: ("Link", "link")
+        }
+    }
+}
+
+private extension URL {
+    var displayPath: String {
+        isFileURL ? path : absoluteString
     }
 }
